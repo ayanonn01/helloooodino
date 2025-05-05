@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Приглашение на дидди парти</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: "calibri";
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: black;
+            color: #ffffff;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .content {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 1.5s ease-out forwards;
+            animation-delay: 0.5s;
+            z-index: 10;
+            text-align: center;
+        }
+
+        .content h1{
+            color: #D4d8dd;
+        }
+
+        .form-container {
+            color: black;
+        }
+
+    
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+        }
+
+        p {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        input[type="text"] {
+    padding: 12px;
+    font-size: 16px;
+    border: 2px solid #AAB7B7;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    width: 250px;
+    background-color: #000000b7;
+    color: #ffffff; /* ← ДОБАВЛЕНО */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+
+        button {
+            padding: 12px 25px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            background-color: #545454;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: rgb(129, 129, 129);
+            transform: translateY(-2px);
+            box-shadow: #fff;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            margin-top: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .invitation-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #2a2a2a; /* глубокий тёмно-серый */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    text-align: center;
+    z-index: 100;
+    max-width: 80%;
+    opacity: 0;
+    font-size: 14px;
+    animation: showInvite 1.2s ease forwards;
+    color: #e0e0e0; /* базовый цвет текста */
+}
+
+@keyframes showInvite {
+    to {
+        opacity: 1;
+    }
+}
+
+.invitation-container h2 {
+    color: #e0e0e0;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.photo-container {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 3px solid #888; /* тёмно-серый акцент */
+}
+
+.photo-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+    </style>
+</head>
+<body>
+
+   
+    <audio id="backgroundMusic" autoplay loop>
+        <source src="https://cdn.pixabay.com/download/audio/2023/03/27/audio_b4a97f894e.mp3" type="audio/mpeg">
+    </audio>
+
+   
+    <audio id="effectSound">
+        <source src="https://www.myinstants.com/media/sounds/siiai-maga.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="content">
+        <h1>салем бро</h1>
+        <p>атынды жаз:</p>
+        <div class="form-container">
+            <input type="text" id="nameInput" placeholder="Ваше имя">
+            <button id="invitationButton">че там</button>
+            <div id="errorMessage" class="error-message">дурыс жаз</div>
+        </div>
+    </div>
+
+    <div id="invitation" class="invitation-container" style="display:none;">
+        <h2>*Құрметті жігіттер және Әділхан!*<br><br>
+        7 мамыр — жай ғана күн емес. Бұл күн – өз орнын табуға, еркін ойлауға, жауапкершілік алуға үйреніп келе жатқан сендер үшін де ерекше.<br><br>
+        📅 *Күні:* 9 мамыр<br>
+        📍 *Орны:* Жасөркен демалыс орталығы<br><br>
+        Келіңдер. Күтеміз.</h2>
+        <div id="photoContainer" class="photo-container"></div>
+    </div>
+
+    <script>
+        const validNames = {
+            "Аман": "aman.jpg",
+            "Мария": "maria.jpg",
+            "Иван": "ivan.jpg",
+            "Ольга": "olga.jpg",
+            "Дмитрий": "dmitry.jpg",
+            "Анна": "anna.jpg",
+            "Сергей": "sergey.jpg",
+            "Елена": "elena.jpg",
+            "Алексей": "alexey.jpg",
+            "Наталья": "natalia.jpg",
+            "Павел": "pavel.jpg"
+        };
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('invitationButton').addEventListener('click', processName);
+        });
+
+        function processName() {
+            const name = document.getElementById('nameInput').value.trim();
+            const errorMessage = document.getElementById('errorMessage');
+            const invitation = document.getElementById('invitation');
+            const photoContainer = document.getElementById('photoContainer');
+            const effectSound = document.getElementById('effectSound');
+
+            errorMessage.style.display = 'none';
+
+            if (validNames.hasOwnProperty(name)) {
+                document.querySelector('.content').style.display = 'none';
+                photoContainer.innerHTML = '';
+
+                const img = document.createElement('img');
+                img.src = validNames[name];
+                img.alt = `Фото ${name}`;
+                photoContainer.appendChild(img);
+
+                invitation.style.display = 'block';
+                effectSound.play();
+            } else {
+                errorMessage.style.display = 'block';
+            }
+        }
+    </script>
+
+</body>
+</html>
